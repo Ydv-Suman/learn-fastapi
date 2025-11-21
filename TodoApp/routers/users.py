@@ -9,8 +9,8 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from sqlalchemy.orm import Session  # pyright: ignore[reportMissingImports]
 from fastapi import APIRouter, Depends, HTTPException, Query, status, Path
 
-from models import Todos, Users
-from database import Base, SessionLocal, engine
+from ..models import Todos, Users
+from ..database import Base, SessionLocal, engine
 from .auth import get_current_user
 
 from passlib.context import CryptContext  # pyright: ignore[reportMissingModuleSource]

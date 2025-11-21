@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import  APIRouter, Depends, HTTPException
 from starlette import status
 from pydantic import BaseModel
-from database import SessionLocal
+from ..database import SessionLocal
 from sqlalchemy.orm import Session  # pyright: ignore[reportMissingImports]
-from models import Users
+from ..models import Users
 from passlib.context import CryptContext # pyright: ignore[reportMissingModuleSource]
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError # pyright: ignore[reportMissingModuleSource]
