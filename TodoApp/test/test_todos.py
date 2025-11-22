@@ -1,7 +1,6 @@
 from ..routers.todos import get_db, get_current_user
 from ..models import Todos
 from.utils import *
-from fastapi import status
 
 
 
@@ -12,12 +11,12 @@ app.dependency_overrides[get_current_user] = override_get_current_user
 
 # Test to read the Todo
 
-def test_read_all_authentication(test_todo):
+def test_read_all_authenticated(test_todo):
     response = client.get("/todos/")
     assert response.status_code==status.HTTP_200_OK
     assert response.json()==[{'complete':False, 'title':'Learn to code!', 'description':'Need to learn everyday', 'priority': 5, 'id':1, 'owner_id':1}]
 
-def test_read_one_authentication(test_todo):
+def test_read_one_authenticated(test_todo):
     response = client.get("/todos/1")
     assert response.status_code==status.HTTP_200_OK
     assert response.json()=={'complete':False, 'title':'Learn to code!', 'description':'Need to learn everyday', 'priority': 5, 'id':1, 'owner_id':1}

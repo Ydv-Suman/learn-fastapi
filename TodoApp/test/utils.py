@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, text  # pyright: ignore[reportMissingImpor
 from sqlalchemy.pool import StaticPool  # pyright: ignore[reportMissingImports]
 from sqlalchemy.orm import sessionmaker  # pyright: ignore[reportMissingImports]
 from fastapi.testclient import TestClient
+from fastapi import status
 
 from ..database import Base
 from ..main import app
