@@ -1,3 +1,7 @@
+import os
+# Set testing environment BEFORE any imports that use the database
+os.environ["TESTING"] = "1"
+
 from starlette.status import HTTP_200_OK
 from sqlalchemy import create_engine, text  # pyright: ignore[reportMissingImports]
 from sqlalchemy.pool import StaticPool  # pyright: ignore[reportMissingImports]

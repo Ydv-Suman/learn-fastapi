@@ -6,22 +6,26 @@ import os
 from dotenv import load_dotenv
 
 
-""""
-For sqlite
-SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"  # to connect sqlite
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}) # connect arg is only for sqlite
-"""
-# for postgresql
-load_dotenv()
+# Determine which database to use based on environment
 
-DB_HOST = os.getenv('DB_HOST')
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-
-SQLALCHEMY_DATABASE_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
-# SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:suman123@localhost/TodoApplicationDatabase'  #password@localhiostname/database
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# For sqlite
+if os.getenv("TESTING"):
+    # Use SQLite for testing
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"  # to connect sqlite
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, 
+        connect_args={"check_same_thread": False}   # connect arg is only for sqlite
+    )
+else:
+    # Use PostgreSQL for production/development
+    load_dotenv()
+    DB_HOST = os.getenv('DB_HOST')
+    DB_NAME = os.getenv('DB_NAME')
+    DB_USER = os.getenv('DB_USER')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    
+    SQLALCHEMY_DATABASE_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 
 """

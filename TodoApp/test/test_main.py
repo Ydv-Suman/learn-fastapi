@@ -1,3 +1,7 @@
+import os
+# Set testing environment BEFORE any imports that use the database
+os.environ["TESTING"] = "1"
+
 from fastapi.testclient import TestClient
 from ..main import app
 from fastapi import responses, status
