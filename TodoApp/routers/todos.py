@@ -48,7 +48,7 @@ def read_all(db: db_dependency, user:user_dependency):
 
 
 # Get todo by id
-@router.get("/todos/{todo_id}", status_code=status.HTTP_200_OK)
+@router.get("/{todo_id}", status_code=status.HTTP_200_OK)
 def filter_with_id(todo_id: Annotated[int, Path(gt=0)], user:user_dependency, db: db_dependency):
     todo = db.query(Todos).filter(Todos.id == todo_id).filter(Todos.owner_id == user.get('id')).first()
     if user is None:
@@ -69,13 +69,13 @@ def create_todo(user: user_dependency, todo_add: TodoRequest, db:db_dependency):
 
 
 # Update todo
-@router.put("/todo/updateTodo/{todo_id}", status_code=status.HTTP_202_ACCEPTED)
+@router.put("/updateTodo/{todo_id}", status_code=status.HTTP_202_ACCEPTED)
 def update_todo(todo_update: TodoRequest, db:db_dependency, user:user_dependency, todo_id: int=Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication  Failed")
     todo_model = db.query(Todos).filter(Todos.id == todo_id).filter(Todos.owner_id == user.get('id')).first()
     if todo_model is None:
-        raise HTTPException(status_code=404, detail="todo not found")
+        raise HTTPException(status_code=404, detail="Todo not found")
     todo_model.title = todo_update.title
     todo_model.description = todo_update.description
     todo_model.priority = todo_update.priority
@@ -84,7 +84,7 @@ def update_todo(todo_update: TodoRequest, db:db_dependency, user:user_dependency
     db.commit()
 
 # Delete todo
-@router.delete('/todo/{todo_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/deleteTodo/{todo_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_todo(db:db_dependency, user:user_dependency, todo_id: int=Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication  Failed")
