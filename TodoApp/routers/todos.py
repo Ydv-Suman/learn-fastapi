@@ -12,7 +12,10 @@ from ..database import Base, SessionLocal, engine
 from .auth import get_current_user
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/todos',
+    tags=['todos']
+)
 
 
 # DB session

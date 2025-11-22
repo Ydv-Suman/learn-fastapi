@@ -2,13 +2,33 @@ from sqlalchemy import create_engine    # pyright: ignore[reportMissingImports]
 from sqlalchemy.orm import sessionmaker    # pyright: ignore[reportMissingImports]
 from sqlalchemy.ext.declarative import declarative_base  # pyright: ignore[reportMissingImports]
 
-## SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"  # to connect sqlite
-## engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}) for connect arg is only for sqlite
+import os
+from dotenv import load_dotenv
 
 
-SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:suman123@localhost/TodoApplicationDatabase'  #password@localhiostname/database
+""""
+For sqlite
+SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"  # to connect sqlite
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}) # connect arg is only for sqlite
+"""
+# for postgresql
+load_dotenv()
+
+DB_HOST = os.getenv('DB_HOST')
+DB_NAME = os.getenv('DB_NAME')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+
+SQLALCHEMY_DATABASE_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
+# SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:suman123@localhost/TodoApplicationDatabase'  #password@localhiostname/database
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
+
+"""
+for MySQL
+SQLALCHEMY_DATABASE_URL = 'mysql+pymysql://root/suman123@127.0.0.1:3306/TodoApplicationDatabase'  #password@location/database
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+"""
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

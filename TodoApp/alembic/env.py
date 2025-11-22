@@ -20,6 +20,7 @@ fileConfig(config.config_file_name)   # remove if statement
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+
 target_metadata = models.Base.metadata   # changed from metadata
 
 # other values from the config, defined by the needs of env.py,
