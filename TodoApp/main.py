@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from .models import Base
 from .database import engine
-from starlette.templating import Jinja2Templates
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from .routers import auth, todos, admin, users
 

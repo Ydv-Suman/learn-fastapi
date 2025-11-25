@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime, timezone
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import  APIRouter, Depends, HTTPException, Request
 from starlette import status
 from pydantic import BaseModel
@@ -22,7 +22,7 @@ SECRETKEY = '7c2804e7e11c73816347cdf55f0a2bef21ceb073ae70be0c07c054a1e470b4ef'
 ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-Oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+Oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token', auto_error=False)
 
 class CreateUserRequest(BaseModel):
     username: str
@@ -77,9 +77,19 @@ def create_access_token(username: str, user_id:int, role:str, expire_delta:timed
     encode.update({'exp':expires})
     return jwt.encode(encode, SECRETKEY, algorithm=ALGORITHM)
 
-async def get_current_user(token:Annotated[str, Depends(Oauth2_bearer)]):
+async def get_current_user(request: Request, token: Optional[str] = Depends(Oauth2_bearer)):
+    # Try to get token from Authorization header first
+    token_value = token
+    
+    # If not in header, try to get from cookies (for browser navigation)
+    if not token_value:
+        token_value = request.cookies.get('access_token')
+    
+    if not token_value:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
+    
     try:
-        payload = jwt.decode(token, SECRETKEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token_value, SECRETKEY, algorithms=[ALGORITHM])
         username: str = payload.get('sub')
         user_id: int = payload.get('id')
         user_role: str = payload.get('role')
