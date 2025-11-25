@@ -1,14 +1,25 @@
 # import dependencies
-from fastapi import FastAPI
+from pathlib import Path
+from fastapi import FastAPI, Request
 from .models import Base
 from .database import engine
-
+from starlette.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from .routers import auth, todos, admin, users
 
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
+
+
+# Get the directory where this file is located
+BASE_DIR = Path(__file__).parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")))
+@app.get("/")
+def test(request: Request):
+    return templates.TemplateResponse("home.html", {"request":request})
 
 
 

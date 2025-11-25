@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime, timezone
 from typing import Annotated
-from fastapi import  APIRouter, Depends, HTTPException
+from fastapi import  APIRouter, Depends, HTTPException, Request
 from starlette import status
 from pydantic import BaseModel
 from ..database import SessionLocal
@@ -9,6 +9,8 @@ from ..models import Users
 from passlib.context import CryptContext # pyright: ignore[reportMissingModuleSource]
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError # pyright: ignore[reportMissingModuleSource]
+from fastapi.templating import Jinja2Templates
+from pathlib import Path
 
 
 router = APIRouter(
@@ -45,6 +47,20 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session,  Depends(get_db)]
+
+
+BASE_DIR = Path(__file__).parent.parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
+## Pages ##
+@router.get("/login-page")
+def render_login_page(request:Request):
+    return templates.TemplateResponse("login.html", {"request":request})
+
+@router.get("/register-page")
+def render_register_page(request:Request):
+    return templates.TemplateResponse("register.html", {"request":request})
+
 
 
 def authenticate_user(username: str, password: str, db):
@@ -101,3 +117,4 @@ def login_for_access_token(
     token = create_access_token(user.username, user.id, user.role, timedelta(minutes=20))
 
     return {'access_token': token, 'token_type': 'bearer'}
+
