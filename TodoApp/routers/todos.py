@@ -58,12 +58,45 @@ async def render_todo_page(request: Request, db: db_dependency, user: user_depen
         if user is None:
             return redirect_to_login()
         
-        todos = db.query(Todos).filter(Todos.owner_id==user.get('id')).all()
+        todos = db.query(Todos).filter(Todos.owner_id==user.get('id')).order_by(Todos.id).all()
+        # Debug: Check all todos in database
+        all_todos = db.query(Todos).all()
+        print(f"User ID: {user.get('id')}, Todos found: {len(todos)}")
+        print(f"All todos in DB: {[(t.id, t.title, t.owner_id) for t in all_todos]}")
         return templates.TemplateResponse("todo.html", {"request":request, "todos": todos, "user": user})
+    except Exception as e:
+        print(f"Error in render_todo_page: {e}")
+        return redirect_to_login()
+
+@router.get('/add-todo-page')
+async def render_add_todo_page(request: Request, db: db_dependency, user: user_dependency):
+    try:
+        if user is None:
+            return redirect_to_login()
+        return templates.TemplateResponse("add-todo.html", {'request': request, 'user': user})
     except:
         return redirect_to_login()
-    
 
+    
+@router.get('/edit-todo-page/{todo_id}')
+async def render_edit_todo_page(request: Request, todo_id: int, db: db_dependency, user: user_dependency):
+    try:
+        if user is None:
+            return redirect_to_login()
+        todo = (
+            db.query(Todos)
+            .filter(Todos.id == todo_id)
+            .filter(Todos.owner_id == user.get('id'))
+            .first()
+        )
+        if todo is None:
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Todo not found")
+        return templates.TemplateResponse("edit-todo.html", {'request': request, 'todo': todo, 'user': user})
+    except HTTPException:
+        raise
+    except Exception as exc:
+        print(f"Error in render_edit_todo_page: {exc}")
+        return redirect_to_login()
 
 
 

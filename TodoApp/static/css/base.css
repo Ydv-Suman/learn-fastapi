@@ -15,6 +15,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .strike-through-td {
     text-decoration: line-through;
+    opacity: 0.6;
+    color: #6c757d;
 }
 
 /* h1 {
